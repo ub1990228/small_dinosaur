@@ -11,6 +11,21 @@ SCREENHEIGHT = 500
 FPS = 30
 
 
+# 游戏结束
+def game_over():
+    # 撞击音效
+    # bump_audio = pygame.mixer.Sound('audio/bump.wav')
+    # bump_audio.play()
+    # 获取窗体宽度、高度
+    screen_w = pygame.display.Info().current_w
+    screen_h = pygame.display.Info().current_h
+    # 加载游戏结束图片
+    over_img = pygame.image.load('image/gameover.png').convert_alpha()
+    # 将游戏结束的图片绘制到窗体中间
+    SCREEN.blit(over_img, ((screen_w - over_img.get_width()) / 2,
+                (screen_h - over_img.get_height()) / 2))
+
+
 def mainGame():
     # 记录得分
     score = 0
@@ -70,6 +85,15 @@ def mainGame():
                 list[i].obstacle_move()
                 # 绘制障碍物
                 list[i].draw_obstacle()
+                if pygame.sprite.collide_rect(dinosaur, list[i]):
+                    over = True
+                    game_over()
+                else:
+                    # 判断是否跳过障碍物
+                    if(list[i].rect.x + list[i].rect.width) < dinosaur.rect.x:
+                        # 加分
+                        score += list[i].getScore()
+                list[i].showScore(score)
         addObstacleTimer += 20
         # 更新窗体
         pygame.display.update()
@@ -209,7 +233,6 @@ class Obstacle:
 
     # 获取分数
     def getScore(self):
-        self.score
         tmp = self.score
         if tmp == 1:
             # self.score_audio.play()
